@@ -5,6 +5,7 @@ import { NavigationMenuList } from "@/components/ui/navigation-menu";
 import MondeFioriSection from './menu-sections/MondeFioriSection';
 import PretAPorterSection from './menu-sections/PretAPorterSection';
 import AccessoiresSection from './menu-sections/AccessoiresSection';
+import SubMenuSection from '../navigation/SubMenuSection';
 
 const MainNavbarMenus = () => {
   return (
