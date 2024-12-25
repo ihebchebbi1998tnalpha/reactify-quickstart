@@ -9,64 +9,60 @@ import { Product } from "@/types/product";
 const ProductsSection = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
-  const { category } = useParams();
   const location = useLocation();
 
-  // Parse the path to get filter parameters
+  // Parse the path segments for filtering
   const pathSegments = location.pathname
     .split('/')
     .filter(segment => segment !== '' && segment !== 'category');
 
+  console.log("Path segments:", pathSegments); // Debug log
+
   const { data: products, isLoading, error } = useQuery({
-    queryKey: ['products', category, ...pathSegments],
+    queryKey: ['products', ...pathSegments],
     queryFn: fetchAllProducts,
     select: (data) => {
       return data.filter((product: Product) => {
-        if (pathSegments.length > 0) {
-          const categoryPath = pathSegments[0].toLowerCase();
-          const segments = categoryPath.split('-');
+        // Debug logs
+        console.log("Filtering product:", {
+          product_type: product.type_product.toLowerCase(),
+          product_category: product.category_product.toLowerCase(),
+          product_itemgroup: product.itemgroup_product.toLowerCase(),
+          pathSegments
+        });
 
-          // Handle special cases for URLs
-          if (segments[0] === 'accessoires') {
-            if (segments[1] === 'sacamainfemme') {
-              return (
-                product.type_product.toLowerCase() === 'accessoires' &&
-                product.category_product.toLowerCase() === 'femmes' &&
-                product.itemgroup_product.toLowerCase() === 'sacs à main'
-              );
-            }
-            // Handle other accessory categories
-            const isAccessory = product.type_product.toLowerCase() === 'accessoires';
-            const matchesCategory = segments[1] === 'femmes' 
-              ? product.category_product.toLowerCase() === 'femmes'
-              : segments[1] === 'homme'
-              ? product.category_product.toLowerCase() === 'men'
-              : true;
-            
-            const itemGroup = segments[2] 
-              ? segments[2].replace('-', ' ').toLowerCase()
-              : null;
-            
-            return isAccessory && 
-                   matchesCategory && 
-                   (!itemGroup || product.itemgroup_product.toLowerCase() === itemGroup);
-          }
+        if (pathSegments.length >= 3) {
+          const [type, category, itemgroup] = pathSegments;
+          
+          // Normalize strings for comparison
+          const normalizedType = type.toLowerCase();
+          const normalizedCategory = category === 'femmes' ? 'femmes' : 
+                                   category === 'homme' ? 'men' : 
+                                   category.toLowerCase();
+          const normalizedItemgroup = itemgroup.replace(/-/g, ' ').toLowerCase();
 
-          // Handle other product types
-          return segments.every((segment, index) => {
-            if (index === 0) return product.type_product.toLowerCase() === segment;
-            if (index === 1) {
-              return segment === 'femmes' 
-                ? product.category_product.toLowerCase() === 'femmes'
-                : segment === 'homme'
-                ? product.category_product.toLowerCase() === 'men'
-                : true;
-            }
-            if (index === 2) {
-              return product.itemgroup_product.toLowerCase() === segment.replace('-', ' ');
-            }
-            return true;
+          const productType = product.type_product.toLowerCase();
+          const productCategory = product.category_product.toLowerCase();
+          const productItemgroup = product.itemgroup_product.toLowerCase();
+
+          // Debug log
+          console.log("Comparing:", {
+            type: normalizedType === productType,
+            category: normalizedCategory === productCategory,
+            itemgroup: normalizedItemgroup === productItemgroup,
+            normalizedType,
+            normalizedCategory,
+            normalizedItemgroup,
+            productType,
+            productCategory,
+            productItemgroup
           });
+
+          return (
+            normalizedType === productType &&
+            normalizedCategory === productCategory &&
+            normalizedItemgroup === productItemgroup
+          );
         }
         return true;
       });

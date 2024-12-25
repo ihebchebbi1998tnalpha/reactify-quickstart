@@ -9,28 +9,33 @@ import MainNavbarProduct from "@/components/productsPages/MainNavbarProduct";
 import { ArrowLeft } from "lucide-react";
 
 const CategoryPage = () => {
-  const { category } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Extract the full path hierarchy and format for display
   const pathSegments = location.pathname
     .split('/')
     .filter(segment => segment !== '' && segment !== 'category');
 
-  // Format breadcrumb segments
   const formatBreadcrumb = (segment: string) => {
-    // Handle special cases first
-    if (segment === 'sacamainfemme') return 'Sacs à main';
-    if (segment === 'accessoires') return 'Accessoires';
-    if (segment === 'femmes') return 'Femmes';
-    if (segment === 'homme') return 'Hommes';
-
-    // General formatting
-    return segment
-      .split('-')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
+    // Handle special cases
+    switch (segment.toLowerCase()) {
+      case 'accessoires':
+        return 'Accessoires';
+      case 'femmes':
+        return 'Femmes';
+      case 'homme':
+        return 'Hommes';
+      case 'sacs-a-main':
+        return 'Sacs à main';
+      case 'pret-a-porter':
+        return 'Prêt à porter';
+      default:
+        // General formatting for other segments
+        return segment
+          .split('-')
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+          .join(' ');
+    }
   };
 
   return (

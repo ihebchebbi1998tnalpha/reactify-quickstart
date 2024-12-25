@@ -46,6 +46,7 @@ export const menuItems = [
       { href: "/category/accessoires/homme/ceintures", title: "Ceintures" },
       { href: "/category/accessoires/homme/cravates", title: "Cravates" },
       { href: "/category/accessoires/homme/mallettes", title: "Mallettes" },
+      { href: "/category/accessoires/femmes/sacs-a-main", title: "Sacs à main" },
     ],
   },
   {
