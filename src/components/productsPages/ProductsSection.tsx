@@ -16,28 +16,20 @@ const ProductsSection = () => {
     .split('/')
     .filter(segment => segment !== '' && segment !== 'category');
 
-  console.log("Path segments:", pathSegments); // Debug log
+  console.log("Path segments for filtering:", pathSegments);
 
   const { data: products, isLoading, error } = useQuery({
     queryKey: ['products', ...pathSegments],
     queryFn: fetchAllProducts,
     select: (data) => {
       return data.filter((product: Product) => {
-        // Debug logs
-        console.log("Filtering product:", {
-          product_type: product.type_product.toLowerCase(),
-          product_category: product.category_product.toLowerCase(),
-          product_itemgroup: product.itemgroup_product.toLowerCase(),
-          pathSegments
-        });
-
         if (pathSegments.length >= 3) {
           const [type, category, itemgroup] = pathSegments;
           
           // Normalize strings for comparison
-          const normalizedType = type.toLowerCase();
-          const normalizedCategory = category === 'femmes' ? 'femmes' : 
-                                   category === 'homme' ? 'men' : 
+          const normalizedType = type.toLowerCase().replace(/-/g, ' ');
+          const normalizedCategory = category.toLowerCase() === 'femme' ? 'femmes' : 
+                                   category.toLowerCase() === 'homme' ? 'men' : 
                                    category.toLowerCase();
           const normalizedItemgroup = itemgroup.replace(/-/g, ' ').toLowerCase();
 
@@ -45,17 +37,10 @@ const ProductsSection = () => {
           const productCategory = product.category_product.toLowerCase();
           const productItemgroup = product.itemgroup_product.toLowerCase();
 
-          // Debug log
-          console.log("Comparing:", {
-            type: normalizedType === productType,
-            category: normalizedCategory === productCategory,
-            itemgroup: normalizedItemgroup === productItemgroup,
-            normalizedType,
-            normalizedCategory,
-            normalizedItemgroup,
-            productType,
-            productCategory,
-            productItemgroup
+          console.log("Filtering product:", {
+            type: { normalized: normalizedType, product: productType, match: normalizedType === productType },
+            category: { normalized: normalizedCategory, product: productCategory, match: normalizedCategory === productCategory },
+            itemgroup: { normalized: normalizedItemgroup, product: productItemgroup, match: normalizedItemgroup === productItemgroup }
           });
 
           return (
