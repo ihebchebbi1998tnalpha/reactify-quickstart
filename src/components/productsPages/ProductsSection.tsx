@@ -36,9 +36,7 @@ const ProductsSection = () => {
           
           // Normalize all strings for comparison
           const normalizedType = normalizeString(type);
-          const normalizedCategory = normalizeString(category) === 'femme' ? 'femmes' : 
-                                   normalizeString(category) === 'homme' ? 'men' : 
-                                   normalizeString(category);
+          const normalizedCategory = normalizeString(category);
           const normalizedItemgroup = normalizeString(itemgroup);
 
           const productType = normalizeString(product.type_product);
